@@ -1,0 +1,64 @@
+﻿@model DocRefList.Models.DocumentsViewModels.ListViewModel
+
+@{
+    ViewData["Title"] = "Документы для ознакомления";
+}
+
+<h4>@ViewData["Title"]</h4>
+
+@if (User.IsInRole(RoleNames.ADMIN))
+{
+    <p class="float-right">
+        <a asp-action="Create">Добавить</a>
+    </p>
+}
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th scope="col">Номер/дата</th>
+        <th scope="col">Название</th>
+        <th scope="col">Дата публикации</th>
+        <th scope="col">Ознакомиться до</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+
+    @foreach (DocumentInfo doc in Model.Documents)
+    {
+        <tr>
+            <td class="align-middle">
+                @($"№{doc.Number} от {doc.Date:dd.MM.yyyy}")
+            </td>
+            <td class="align-middle">
+                @doc.Caption
+                <br />
+                <span class="badge badge-danger badge-pill" state-acq-for="@doc.Id"></span>
+            </td>
+            <td class="align-middle">
+                @doc.CreatedAt
+            </td>
+            <td class="align-middle">
+                @doc.SeeBefore
+            </td>
+            <td class="align-middle">
+                <span class="badge badge-primary badge-pill" count-acq-for="@doc.Id">0</span>
+            </td>
+            <td class="align-middle">
+                <a class="btn btn-info m-1" asp-action="Details" asp-route-id="@doc.Id">Читать</a>
+                @if (User.IsInRole(RoleNames.ADMIN))
+                {
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@doc.Id">Удалить</a>
+                }
+            </td>
+        </tr>
+    }
+
+    </tbody>
+</table>
+<div class="pb-3">
+    <nav>
+        <vc:pager paging-list="@Model.Documents" />
+    </nav>
+</div>

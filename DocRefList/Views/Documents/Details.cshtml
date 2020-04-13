@@ -1,0 +1,58 @@
+﻿@model DetailsViewModel
+
+@{
+    ViewData["Title"] = "Документ";
+}
+
+<h4>@ViewData["Title"] @($"№{Model.Document.Number} от {Model.Document.Date:dd.MM.yyyy} ({Model.Document.Caption})")</h4>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Описание:
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.Document.Note ?? "н/д")
+        </dd>
+        <dt class="col-sm-2">
+            Вложение:
+        </dt>
+        <dd class="col-sm-10">
+            <ul document-id="@Model.Document.Id" item-class="p-0"></ul>
+        </dd>
+        @if (User.IsInRole(RoleNames.ADMIN))
+        {
+            <dt class="col-sm-2">
+                Лист ознакомления:
+            </dt>
+            <dd class="col-sm-10">
+                <a id="openList" href="#" class="stretched-link"><small>Показать</small></a>
+                <div id="list" style="display:none">
+                    <ul class="list-group">
+                        @foreach (Familiarization familiarization in Model.Document.Familiarizations.OrderBy(f => f.DateTime))
+                        {
+                            <li class="w-75 list-group-item p-1"><small>@($"{familiarization.Employee.FullName} [{familiarization.Employee.Email}] {familiarization.DateTime:dd.MM.yyyy HH:mm:ss}")</small></li>
+                        }
+                    </ul>
+                    <a id="closeList" href="#" class="stretched-link"><small>Скрыть</small></a>
+                </div>
+             </dd>
+        }
+    </dl>
+</div>
+<div>
+    <form asp-action="Acquainted">
+        <input type="hidden" name="id" id="id" value="@Model.Document.Id" />
+        @if (!Model.СurrentUserIsFamiliarized)
+        {
+            <input type="submit" value="Ознакомлен" class="btn btn-primary" />
+        }
+        else
+        {
+            <input type="submit" value="Ознакомлен" class="btn btn-outline-primary" disabled/>
+        }|
+        <a asp-action="List">Вернуться к списку</a>
+    </form>
+</div>
+

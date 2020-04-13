@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Employee> SignInManager
+@inject UserManager<Employee> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
+        <ul class="nav navbar-nav navbar-right">
+            <li class="nav-item">
+                <a class="nav-link">@UserManager.GetUserName(User)</a>
+            </li>
+            @if (User.IsInRole(RoleNames.ADMIN))
+            {
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Admin" asp-action="List">Пользователи</a>
+                </li>
+            }
+            <li class="nav-item">
+                <button type="submit" class="btn btn-link navbar-btn navbar-link">Выйти</button>
+            </li>
+        </ul>
+    </form>
+}
+</ul>
